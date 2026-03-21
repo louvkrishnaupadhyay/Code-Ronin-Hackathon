@@ -1,3 +1,43 @@
+<<<<<<< HEAD
+# CodeNova Adaptive Vision Prototype
+
+This is a complete end-to-end Python prototype for an adaptive object detection system that does NOT require retraining to add new objects.
+
+## Architecture
+1. **Object Detection**: YOLOv8 (ultralytics) for localization.
+2. **Feature Extraction**: DINOv2 (HuggingFace transformers) for embedding generation.
+3. **Search Engine**: FAISS for efficient similarity search.
+4. **Adaptive Learning**: Dynamic database updates without retraining.
+5. **UI**: Streamlit-based interactive dashboard.
+6. **Voice**: Speech notifications for detected objects.
+
+## Project Structure
+- `app.py`: Streamlit User Interface and main application logic.
+- `detect.py`: YOLOv8 detection and image cropping module.
+- `embed.py`: DINOv2 embedding generation using HuggingFace.
+- `database.py`: FAISS-based vector database management.
+- `learn.py`: Logic for adding new objects to the knowledge base.
+- `voice.py`: Text-to-speech assistant.
+- `data/`: Directory containing vectors and labels.
+
+## Installation
+Ensure you have the required dependencies installed:
+```bash
+pip install -r requirements.txt
+```
+
+## How to Run
+Launch the Streamlit application:
+```bash
+streamlit run app.py
+```
+
+## Usage
+1. **Detection**: Upload an image. The system will detect objects and highlight them.
+2. **Identification**: Recognized objects will be labeled. Unrecognized ones will be marked as "Unknown".
+3. **Learning**: For "Unknown" objects, enter a label name in the sidebar and click "Add to Database". The system now knows that object!
+4. **Voice**: Enable/disable speech notifications to hear the names of detected objects.
+=======
 # 🛡️ CodeNova: Adaptive Object Recognition System
 
 ### *Empowering Vision with Dynamic Real-Time Learning*
@@ -133,3 +173,4 @@ Contributions are what make the open-source community an amazing place to learn,
 
 ---
 
+>>>>>>> e845c19a8e037531d8ef3a5371bc762f47f47bab

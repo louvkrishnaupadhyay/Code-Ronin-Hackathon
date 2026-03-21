@@ -1,0 +1,10 @@
+ultralytics
+torch
+torchvision
+faiss-cpu
+opencv-python
+numpy
+pyttsx3
+pillow
+transformers
+streamlit
