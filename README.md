@@ -1,176 +1,139 @@
-<<<<<<< HEAD
-# CodeNova Adaptive Vision Prototype
+# 🛡️ CodeNova: AI-First Adaptive Vision System
 
-This is a complete end-to-end Python prototype for an adaptive object detection system that does NOT require retraining to add new objects.
-
-## Architecture
-1. **Object Detection**: YOLOv8 (ultralytics) for localization.
-2. **Feature Extraction**: DINOv2 (HuggingFace transformers) for embedding generation.
-3. **Search Engine**: FAISS for efficient similarity search.
-4. **Adaptive Learning**: Dynamic database updates without retraining.
-5. **UI**: Streamlit-based interactive dashboard.
-6. **Voice**: Speech notifications for detected objects.
-
-## Project Structure
-- `app.py`: Streamlit User Interface and main application logic.
-- `detect.py`: YOLOv8 detection and image cropping module.
-- `embed.py`: DINOv2 embedding generation using HuggingFace.
-- `database.py`: FAISS-based vector database management.
-- `learn.py`: Logic for adding new objects to the knowledge base.
-- `voice.py`: Text-to-speech assistant.
-- `data/`: Directory containing vectors and labels.
-
-## Installation
-Ensure you have the required dependencies installed:
-```bash
-pip install -r requirements.txt
-```
-
-## How to Run
-Launch the Streamlit application:
-```bash
-streamlit run app.py
-```
-
-## Usage
-1. **Detection**: Upload an image. The system will detect objects and highlight them.
-2. **Identification**: Recognized objects will be labeled. Unrecognized ones will be marked as "Unknown".
-3. **Learning**: For "Unknown" objects, enter a label name in the sidebar and click "Add to Database". The system now knows that object!
-4. **Voice**: Enable/disable speech notifications to hear the names of detected objects.
-=======
-# 🛡️ CodeNova: Adaptive Object Recognition System
-
-### *Empowering Vision with Dynamic Real-Time Learning*
+### *Real-Time Zero-Shot Object Recognition with Quantum-Hybrid Intelligence*
 
 [![Architecture](https://img.shields.io/badge/Architecture-YOLOv8--DINOv2--FAISS-blueviolet)](#architecture)
 [![License](https://img.shields.io/badge/License-MIT-green)](#license)
-[![Tech](https://img.shields.io/badge/Framework-PyTorch-red)](#tech-stack)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue)](#tech-stack)
+[![Framework](https://img.shields.io/badge/Framework-Streamlit-red)](#tech-stack)
 
 ---
 
-## 🚀 The Vision
+## 🚀 Overview
 
-Traditional object detection systems require **expensive retraining** or **fine-tuning** every time a new object needs to be recognized. This project breaks that barrier.
+**CodeNova** is an adaptive computer vision platform that breaks the traditional "train-then-deploy" cycle. Instead of retraining models to learn new objects, CodeNova uses a **Zero-Shot Learning** approach. It combines high-speed object detection with state-of-the-art semantic embedding and a retrieval-augmented database to learn new objects through simple user interaction in real-time.
 
-By combining **State-of-the-Art Object Detection (YOLOv8)** with **Foundation Model Embeddings (DINOv2)** and **Sub-millisecond Vector Retrieval (FAISS)**, we've built a system that learns new objects through a simple conversation—**zero retraining required**.
+### Problem-statement fit (open-set extension)
+
+Many briefs ask for a detector that can **add new object categories after deployment** without **full model retraining** (and without fine-tuning or transfer learning on the base detector). CodeNova satisfies that as follows:
+
+| Requirement | What we do |
+|-------------|------------|
+| Base detection | **YOLOv8** stays **frozen** (fixed weights, COCO-style proposals). |
+| Add object *a* later | User labels an **UNKNOWN** crop in **Image lab** → we store a **DINOv2 embedding** + name in `data/database.pkl`. |
+| No detector retrain | We never run backprop / fine-tune on YOLO; only the **embedding memory** grows. |
+| Immediate use | **Live cam** and the next **Image lab** run retrieve the new label by **similarity**. |
+
+**Pitch:** *Same frozen “eyes” (boxes), extensible “memory” (embeddings)—not a new training run.*
 
 ---
 
-## 🛠️ System Architecture
+## 🏗️ System Architecture
 
-Our architecture follows a modular, dual-stage pipeline that separates *Localization* from *Identification*.
+Our engine follows a modular, three-stage "Sense-Understand-Recall" pipeline.
 
 ```mermaid
 graph TD
-    A[Input: Image/Video] --> B[YOLOv8: Detection]
-    B --> C[Bounding Boxes Created]
-    C --> D[Object Cropping]
-    D --> E[DINOv2: Feature Extraction]
-    E --> F[Vector Representation Created]
-    F --> G{FAISS: Similarity Search}
-    G -- Match Found --> H[Show Label]
-    G -- No Match --> I[Status: Unknown Object]
-    I --> J[Voice AI: Assistive Interaction]
-    J --> K[User Provides Label via Voice]
-    K --> L[Store Embedding + Label in DB]
-    L --> M[System Updated Instantly]
+    A[Input Stream] --> B[YOLOv8s: Object Detection]
+    B --> C[Localized Bounding Boxes]
+    C --> D[Intelligent Cropping]
+    D --> E[DINOv2: Semantic Embedding 768D]
+    E --> F[Feature Normalization]
+    F --> G[Vector Retrieval Engine]
+    G -- "Match (Score > Threshold)" --> H[Retrieve Known Label]
+    G -- "No Match (Score < Threshold)" --> I[Label as 'Unknown']
+    I --> J[User Feedback via UI]
+    J --> K[Update Knowledge Base .pkl]
+    K --> G
+    H --> L[Voice Notification + UI Display]
+    I --> L
 ```
+
+### 1. Localization (The "Eyes")
+We use **YOLOv8s** (Ultralytics) to identify where objects are in the frame. This provides the spatial coordinates (bounding boxes) needed for precise cropping.
+
+### 2. Semantic Understanding (The "Brain")
+Each detected object is passed through **Meta's DINOv2 (base)**. DINOv2 transforms raw pixels into a 768-dimensional mathematical representation (embedding) that captures the "essence" of the object, regardless of lighting or angle.
+
+### 3. Retrieval & Learning (The "Memory")
+CodeNova uses a high-performance vector database (`database.pkl`).
+- **Inference**: Every detected object is compared against the database using **Cosine Similarity**.
+- **Quantum Enhancement**: Optionally integrates a **4-qubit PennyLane circuit** for hybrid similarity scoring.
+- **Learning**: If an object is unknown, specific embeddings can be saved with a label immediately, updating the "brain" without a single line of code.
 
 ---
 
 ## ✨ Key Features
 
-- **🧠 Open-World Recognition**: Add new objects dynamically without touching a single line of training code.
-- **⚡ Industrial Performance**: YOLOv8 ensures lighting-fast detection, while FAISS handles millions of vectors in microseconds.
-- **👁️ Semantic Visual Features**: DINOv2 provides extremely robust feature vectors that work across different lighting and angles.
-- **🎙️ Voice-Activated Learning**: A human-in-the-loop mechanism where the system "asks" for labels and learns them on the fly.
-- **📈 Scalable Storage**: New knowledge is stored as vector embeddings in a queryable database, making the system smarter with every interaction.
+- **🧠 Zero-Shot Recognition**: Teach the system a "Chair" or "Coffee Mug" once, and it remembers it forever.
+- **⚡ Industrial Performance**: Optimized for real-time inference on CPU/GPU.
+- **🎙️ Voice Integration**: Uses a non-blocking TTS engine to announce detected objects.
+- **🎨 Modern Glassmorphism UI**: A premium Streamlit interface featuring dark mode, blur effects, and real-time confidence bars.
+- **⚛️ Quantum-Hybrid Scoring**: Incorporates Pennylane for advanced feature similarity matching (Switchable).
+- **🛡️ Factory Reset**: Safe mechanism to clear known classes and start fresh.
 
 ---
 
-## 🏗️ Technical Implementation
+## 🛠️ Technology Stack
 
-### 1. Detection (YOLOv8)
-Locates objects in the frame and provides precise bounding boxes. It acts as the "eyes" that find *where* the objects are.
-
-### 2. Feature Extraction (DINOv2)
-Crops are passed through Meta’s DINOv2. Unlike traditional CNNs, DINOv2 produces highly descriptive semantic embeddings that capture the essence of an object even from a single example.
-
-### 3. Retrieval (FAISS)
-The extracted vector is compared against a pre-populated index.
-- **Distance Metric**: L2 or Inner Product (Cosine Similarity).
-- **Thresholding**: If the distance > threshold, the object is flagged as "Unknown".
-
-### 4. Dynamic Update (Voice + DB)
-When an unknown object is detected:
-1.  **Speech-to-Text**: Captures user input (e.g., "This is a specialized lab tool").
-2.  **Vector Persistence**: The embedding and label are stored.
-3.  **Instant Retrieval**: The next time the object appears, FAISS will find it immediately.
-
----
-
-## 📂 Project Structure
-
-```text
-CodeNova/
-├── models/             # YOLOv8 & DINOv2 checkpoints
-├── src/
-│   ├── detector.py     # YOLO logic
-│   ├── embedder.py     # DINOv2 feature extraction
-│   ├── search.py       # FAISS indexing/search
-│   ├── voice.py        # Voice interaction module
-│   └── database.py     # Vector storage & management
-├── data/               # Local vector storage
-├── main.py             # Main execution entry point
-└── requirements.txt    # Project dependencies
-```
+| Component | Technology | Role |
+|---|---|---|
+| **Frontend** | Streamlit | Responsive Web UI |
+| **Detection** | YOLOv8s | Spatial Localization |
+| **Embeddings** | DINOv2 (Vision Transformer) | Semantic Feature Extraction |
+| **Vector DB** | FAISS / Pickle | High-speed retrieval & persistence |
+| **Quantum ML** | PennyLane | Hybrid similarity engine |
+| **Audio** | Pyttsx3 | Background Voice Assistant |
+| **Backend** | Python / OpenCV | Glue logic and Image Processing |
 
 ---
 
 ## 🚥 Getting Started
 
-### Prerequisites
-- Python 3.9+
-- CUDA-enabled GPU (Recommended)
+### 1. Installation
 
-### Installation
+Clone the repository and install dependencies:
+```bash
+git clone https://github.com/yourusername/codenova.git
+cd codenova
+pip install -r requirements.txt
+```
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/codenova.git
-   cd codenova
-   ```
+### 2. Automatic Setup
+Download sample datasets and build the initial vector index:
+```bash
+python auto_setup.py
+```
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Run the system:
-   ```bash
-   python main.py
-   ```
-
----
-
-## 🔮 Future Roadmap
-
-- [ ] Integration with **Segment Anything Model (SAM)** for pixel-perfect cropping.
-- [ ] Cloud-sync for vector databases across multiple edge devices.
-- [ ] Support for **Multimodal LLMs** to automatically describe unknown objects.
+### 3. Launch the System
+Start the main application:
+```bash
+streamlit run app.py
+```
 
 ---
 
-## 🤝 Contributing
+## 📂 Project Structure
 
-Contributions are what make the open-source community an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- `app.py`: Main Streamlit application and UI logic.
+- `detect.py`: YOLOv8 wrapper for localization.
+- `embed.py`: DINOv2 interface for feature extraction.
+- `database.py`: Vector storage and hybrid similarity logic.
+- `voice.py`: Non-blocking text-to-speech engine.
+- `src/quantum_similarity.py`: Quantum circuit implementation.
+- `data/`: Contains persisted embeddings (`database.pkl`).
 
 ---
 
->>>>>>> e845c19a8e037531d8ef3a5371bc762f47f47bab
+## ⚛️ Quantum Enhancement Details
+
+The system includes an experimental PennyLane-powered circuit that projects semantic vectors into a Hilbert space for comparison:
+1. **Normalization**: Vectors are L2-normalized.
+2. **PCA**: Compressed from 768D → 4D.
+3. **Angle Encoding**: Data is encoded using RZ/RY gates.
+4. **Adjoint Comparison**: Overlap between query and database vectors is measured.
+
+---
+
+## 📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.

@@ -1,0 +1,12 @@
+ultralytics>=8.0.0
+torch
+torchvision
+faiss-cpu
+opencv-python>=4.8.0
+numpy
+pyttsx3
+pillow
+transformers
+streamlit>=1.28.0
+SpeechRecognition>=3.10.0
+pyaudio
